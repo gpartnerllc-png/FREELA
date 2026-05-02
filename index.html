@@ -3,190 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FREELAS | Gestão Operacional</title>
+    <title>FREELAS | Operação Full Scale</title>
     <style>
         :root {
-            --bg-color: #FFFFFF;
-            --text-dark: #1A1A1A;
-            --primary-blue: #005bb5;
+            --primary-blue: #0047AB;
             --secondary-blue: #007AFF;
-            --alert-yellow: #FFCC00;
             --gold-orange: #FF9900;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            --alert-yellow: #FFCC00;
+            --glass: rgba(255, 255, 255, 0.12);
+            --glass-dark: rgba(0, 0, 0, 0.6);
         }
 
+        * { box-sizing: border-box; }
         body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: -apple-system, "SF Pro Display", "Roboto", sans-serif;
-            overflow: hidden; user-select: none; background: #000;
+            margin: 0; padding: 0; height: 100%; width: 100%;
+            font-family: -apple-system, "SF Pro Display", sans-serif;
+            overflow: hidden; background: #000;
         }
 
-        /* 1. CARROSSEL DE FUNDO (ESTILO FREELA SERVIÇOS) */
-        .bg-carousel {
-            position: fixed; inset: 0; z-index: -1;
+        /* FUNDO FULL SCREEN COM CARROSSEL */
+        .bg-wrapper {
+            position: fixed; inset: 0; z-index: -2;
             background-size: cover; background-position: center;
-            animation: bgSlide 25s infinite alternate;
-            filter: brightness(0.4) blur(2px);
+            animation: zoomBg 30s infinite alternate;
         }
-        @keyframes bgSlide {
-            0% { background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1080'); }
-            33% { background-image: url('https://images.unsplash.com/photo-1556740734-7f95834d0ff9?q=80&w=1080'); }
-            66% { background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1080'); }
-            100% { background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1080'); }
+        @keyframes zoomBg {
+            0% { transform: scale(1); background-image: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1920'); }
+            50% { transform: scale(1.1); background-image: url('https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1920'); }
+            100% { transform: scale(1); background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1920'); }
+        }
+
+        /* FAIXA AZUL COMPLETA (OVERLAY) */
+        .overlay-blue {
+            position: fixed; inset: 0; z-index: -1;
+            background: linear-gradient(135deg, rgba(0, 71, 171, 0.85), rgba(0, 122, 255, 0.7));
         }
 
         .app-container {
-            width: 100%; max-width: 420px; height: 100%; margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(25px);
-            position: relative; display: flex; flex-direction: column; box-shadow: var(--shadow);
-            border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2);
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            position: relative;
         }
 
-        /* 2. TELA DE LOGIN POR CPF (AUTOMAÇÃO) */
+        /* TELA DE LOGIN 3D+ */
         #auth-screen {
-            position: absolute; inset: 0; z-index: 9999;
-            background: var(--primary-blue);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 30px; text-align: center; color: #FFF; transition: 0.6s ease-in-out;
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 20px; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .auth-box {
-            background: rgba(255,255,255,0.1); padding: 40px 20px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 300px;
-        }
-        .cpf-input {
-            width: 85%; padding: 18px; border-radius: 15px; border: none; text-align: center;
-            font-size: 18px; font-weight: bold; margin: 20px 0; color: var(--primary-blue);
-            letter-spacing: 1px;
-        }
-
-        /* 3. DASHBOARD PRINCIPAL */
-        #main-app { display: none; flex-direction: column; height: 100%; overflow-y: auto; }
-
-        .header {
-            background: var(--card-bg); padding: 45px 25px 25px;
-            border-bottom: 3px solid var(--gold-orange);
-        }
-        .status-badge {
-            background: var(--alert-yellow); color: var(--text-dark);
-            padding: 5px 12px; border-radius: 10px; font-size: 10px; font-weight: 800;
-            display: inline-block; margin-bottom: 10px;
-        }
-
-        .finance-card {
-            background: #FFF; margin: 20px; padding: 25px;
-            border-radius: 20px; box-shadow: var(--shadow); border-left: 5px solid var(--secondary-blue);
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 35px;
+            padding: 50px 30px;
+            width: 100%; max-width: 450px;
             text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4), inset 0 0 15px rgba(255,255,255,0.1);
+            transform: perspective(1000px) rotateX(2deg);
         }
-        .balance-value { font-size: 38px; font-weight: 900; color: var(--text-dark); margin: 5px 0; }
-        .clt-info { font-size: 11px; color: #666; font-weight: bold; text-transform: uppercase; }
+        .login-card h1 { color: #FFF; font-weight: 900; font-size: 32px; margin: 0; letter-spacing: 3px; }
+        .login-card p { color: rgba(255,255,255,0.7); font-size: 11px; letter-spacing: 2px; margin-bottom: 30px; }
 
-        .module-title { font-size: 13px; font-weight: 800; margin: 10px 25px; color: #FFF; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        input {
+            width: 100%; padding: 20px; border-radius: 18px; border: none;
+            background: #FFF; font-size: 20px; font-weight: bold; text-align: center;
+            margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
 
-        /* LISTA DE ESCALA (ALGORITMO JUSTO) */
-        .roster-list { margin: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+        /* DASHBOARD FULL WIDTH (LOGICA XLOG) */
+        #main-app { display: none; height: 100%; overflow-y: auto; padding: 25px; }
+        
+        .xlog-header {
+            background: var(--glass-dark); border-radius: 20px; padding: 25px;
+            border-bottom: 4px solid var(--gold-orange); margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; color: #FFF;
+        }
+        .xlog-user h2 { margin: 0; font-size: 24px; color: var(--gold-orange); }
+        .xlog-user span { font-size: 12px; font-weight: bold; opacity: 0.8; }
+
+        .finance-panel {
+            background: #FFF; border-radius: 25px; padding: 30px;
+            margin-bottom: 25px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .val-total { font-size: 52px; font-weight: 900; color: #1A1A1A; margin: 10px 0; }
+
+        .transport-box {
+            background: #F0F4F8; padding: 15px; border-radius: 15px;
+            margin-bottom: 20px; border: 2px dashed var(--secondary-blue);
+        }
+
+        /* GRID DE ESCALA AMPLIADO */
+        .roster-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px; margin-bottom: 100px;
+        }
         .roster-item {
-            background: var(--card-bg); padding: 15px; border-radius: 15px;
+            background: rgba(255,255,255,0.95); padding: 20px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--primary-blue);
+            border-left: 8px solid var(--primary-blue);
         }
-        .roster-item.priority { border-left-color: var(--gold-orange); background: #FFF9E6; }
-        .worker-info h4 { margin: 0; font-size: 14px; color: var(--text-dark); }
-        .worker-info p { margin: 2px 0 0; font-size: 10px; color: #666; font-weight: 600; }
-        .worker-status { font-size: 11px; font-weight: 900; color: var(--gold-orange); }
+        .roster-item.priority { border-left-color: var(--gold-orange); background: #FFFDF0; }
 
-        .btn-group { padding: 20px; display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
-        .btn-action {
+        .btn-main {
             background: var(--gold-orange); color: #FFF; border: none;
-            padding: 18px; border-radius: 20px; font-weight: 900; font-size: 14px;
-            cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
+            padding: 22px; border-radius: 20px; font-weight: 900; font-size: 16px;
+            width: 100%; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 12px 24px rgba(255, 153, 0, 0.4);
         }
-        .btn-pix { background: var(--secondary-blue); box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3); }
+
+        .footer-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--glass-dark); backdrop-filter: blur(10px);
+            padding: 20px; display: flex; gap: 10px; z-index: 100;
+        }
         
         ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
 <body>
 
-<div class="bg-carousel"></div>
+<div class="bg-wrapper"></div>
+<div class="overlay-blue"></div>
 
 <div class="app-container">
     
-    <!-- TELA DE ACESSO -->
+    <!-- LOGIN 3D+ -->
     <div id="auth-screen">
-        <div class="auth-box">
-            <h2 style="margin:0; font-weight: 900;">FREELA</h2>
-            <p style="font-size: 10px; letter-spacing: 2px; margin-bottom: 25px;">SISTEMA DE ESCALA GIG</p>
-            <input type="tel" id="cpf-input" class="cpf-input" placeholder="000.000.000-00" maxlength="11">
-            <button class="btn-action" style="width: 100%;" onclick="validateAccess()">ENTRAR NO SISTEMA</button>
-            <p id="auth-error" style="color: var(--alert-yellow); font-size: 11px; margin-top: 15px; display: none; font-weight: bold;">CPF não autorizado na escala.</p>
+        <div class="login-card">
+            <h1>FREELA</h1>
+            <p>SISTEMA DE ESCALA GIG • v2.6</p>
+            <input type="tel" id="cpf-input" placeholder="000.000.000-00" maxlength="11">
+            <button class="btn-main" onclick="startApp()">ENTRAR NO SISTEMA</button>
+            <div id="auth-error" style="color: var(--alert-yellow); font-size: 12px; margin-top: 15px; display: none; font-weight: bold;">CPF NÃO AUTORIZADO NA ESCALA ATUAL</div>
         </div>
     </div>
 
-    <!-- DASHBOARD OPERACIONAL -->
+    <!-- DASHBOARD ESTILO XLOG -->
     <div id="main-app">
-        <div class="header">
-            <div class="status-badge">OPERADOR CONECTADO</div>
-            <h2 id="user-welcome" style="margin: 0; font-weight: 800; color: var(--primary-blue);">Bem-vindo</h2>
-            <p id="user-meta" style="margin: 5px 0 0; font-size: 12px; color: #666; font-weight: bold;">Função: ---</p>
+        <div class="xlog-header">
+            <div class="xlog-user">
+                <span id="label-cpf">ID: 000.000.000-00</span>
+                <h2 id="user-name">Carregando...</h2>
+            </div>
+            <div style="text-align: right;">
+                <div style="background: var(--gold-orange); padding: 5px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; color: #000;">OPERADOR ATIVO</div>
+            </div>
         </div>
 
-        <div class="finance-card">
-            <div class="clt-info">Valor Agregado (Base CLT + DSR)</div>
-            <div class="balance-value" id="current-value">R$ 0,00</div>
-            <div class="clt-info" id="time-worked" style="color: var(--secondary-blue);">00h 00m 00s</div>
+        <div class="finance-panel">
+            <div class="clt-info" style="font-weight: 800; color: #666; font-size: 12px;">AGREGADO EM TEMPO REAL (CLT+DSR)</div>
+            <div class="val-total" id="current-value">R$ 0,00</div>
+            <div id="time-worked" style="font-weight: 900; color: var(--secondary-blue); font-size: 18px;">00:00:00</div>
         </div>
 
-        <div class="module-title">Algoritmo de Escala Justa (Orkana Mode)</div>
-        <div class="roster-list" id="roster-container">
-            <!-- Gerado via JS -->
+        <div class="transport-box">
+            <label style="font-size: 11px; font-weight: 900; color: var(--primary-blue); display: block; margin-bottom: 5px;">CONFIRMAR TRANSPORTE INICIAL (OBRIGATÓRIO)</label>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: bold; font-size: 18px;">R$</span>
+                <input type="number" id="trans-input" value="25.00" style="margin:0; width: 80%; background: transparent; box-shadow: none; text-align: right;">
+            </div>
         </div>
 
-        <div class="btn-group">
-            <button class="btn-action" id="work-btn" onclick="toggleShift()">INICIAR TURNO (BATER PONTO)</button>
-            <button class="btn-action btn-pix" onclick="generatePix()">GERAR COBRANÇA PIX</button>
+        <h3 style="color: #FFF; margin-bottom: 15px;">Escala de Oportunidades</h3>
+        <div class="roster-grid" id="roster-container">
+            <!-- Dinâmico -->
+        </div>
+
+        <div class="footer-nav">
+            <button class="btn-main" id="work-btn" onclick="toggleShift()" style="flex: 2;">INICIAR TURNO</button>
+            <button class="btn-main" onclick="alert('Gerando Cobrança...')" style="flex: 1; background: var(--secondary-blue); box-shadow: none;">PIX</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. BLINDAGEM ALADDIN
-    (() => {
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()))) e.preventDefault();
-        });
-    })();
-
-    // 2. DATABASE RÍGIDO (Simulando Integração de API)
-    const databaseFreelancers = [
-        { cpf: "04037096102", nome: "Mikaele N.", funcao: "Garçonete", rendaSemanal: 0, transporte: 25.00 },
-        { cpf: "34259998854", nome: "Cristian Florencio", funcao: "Estrategista", rendaSemanal: 450.00, transporte: 0 },
-        { cpf: "12345678900", nome: "Ana Costa", funcao: "Logística", rendaSemanal: 0, transporte: 15.00 },
-        { cpf: "98765432100", nome: "Carlos M.", funcao: "Garçom", rendaSemanal: 120.00, transporte: 20.00 }
+    // BASE DE DADOS FIXA PARA VALIDAR
+    const database = [
+        { cpf: "04037096102", nome: "Mikaele N.", cargo: "Garçonete", renda: 0, fixoTrans: 25.00 },
+        { cpf: "34259998854", nome: "Cristian R.", cargo: "Estrategista", renda: 450.00, fixoTrans: 0 },
+        { cpf: "55566677788", nome: "Ana Costa", cargo: "Logística", renda: 0, fixoTrans: 15.00 }
     ];
 
-    let currentUser = null;
+    let activeUser = null;
     let isWorking = false;
-    let secondsWorked = 0;
-    let timerInterval;
-    const valorHoraCLT = 45.00;
+    let seconds = 0;
+    let timer;
 
-    // 3. LÓGICA DE ACESSO
-    function validateAccess() {
-        const input = document.getElementById('cpf-input').value.replace(/\D/g, '');
-        const user = databaseFreelancers.find(u => u.cpf === input);
+    function startApp() {
+        const cpf = document.getElementById('cpf-input').value.replace(/\D/g, '');
+        const user = database.find(u => u.cpf === cpf);
 
-        if (user) {
-            currentUser = user;
-            document.getElementById('user-welcome').innerText = user.nome;
-            document.getElementById('user-meta').innerText = `Função: ${user.funcao} | Transporte: R$ ${user.transporte.toFixed(2)}`;
-            
+        if(user) {
+            activeUser = user;
+            document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
             document.getElementById('auth-screen').style.opacity = '0';
+            
             setTimeout(() => {
                 document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'flex';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('user-name').innerText = user.nome;
+                document.getElementById('label-cpf').innerText = `ID: ${user.cpf}`;
+                document.getElementById('trans-input').value = user.fixoTrans.toFixed(2);
                 renderRoster();
             }, 600);
         } else {
@@ -194,61 +211,47 @@
         }
     }
 
-    // 4. RENDERIZAÇÃO DA ESCALA (ESTILO WORKANA)
     function renderRoster() {
         const container = document.getElementById('roster-container');
         container.innerHTML = "";
-        
-        // Algoritmo: Prioridade 0 para quem ganhou menos na semana
-        const sorted = [...databaseFreelancers].sort((a, b) => a.rendaSemanal - b.rendaSemanal);
-
-        sorted.forEach(worker => {
-            const isPriority = worker.rendaSemanal === 0;
-            const div = document.createElement('div');
-            div.className = `roster-item ${isPriority ? 'priority' : ''}`;
-            div.innerHTML = `
-                <div class="worker-info">
-                    <h4>${worker.nome} ${isPriority ? '⭐' : ''}</h4>
-                    <p>CPF: ***.${worker.cpf.substring(3,6)}.***-**</p>
-                    <p>Renda: R$ ${worker.rendaSemanal.toFixed(2)}</p>
+        database.sort((a,b) => a.renda - b.renda).forEach(w => {
+            const priority = w.renda === 0;
+            container.innerHTML += `
+                <div class="roster-item ${priority ? 'priority' : ''}">
+                    <div>
+                        <strong style="font-size:16px;">${w.nome}</strong><br>
+                        <small>${w.cargo} | R$ ${w.renda.toFixed(2)}</small>
+                    </div>
+                    <div style="color: ${priority ? 'var(--gold-orange)' : '#666'}; font-weight: 900; font-size: 11px;">
+                        ${priority ? 'PRIORIDADE ⭐' : 'DISPONÍVEL'}
+                    </div>
                 </div>
-                <div class="worker-status">${isPriority ? 'PRIORIDADE' : 'DISPONÍVEL'}</div>
             `;
-            container.appendChild(div);
         });
     }
 
-    // 5. CONTROLE DE TURNO
     function toggleShift() {
         const btn = document.getElementById('work-btn');
-        if (!isWorking) {
+        if(!isWorking) {
             isWorking = true;
-            btn.innerText = "PAUSAR TURNO (EM OPERAÇÃO)";
+            btn.innerText = "PARAR TURNO (EM OPERAÇÃO)";
             btn.style.background = "#FF3B30";
-            timerInterval = setInterval(updateEngine, 1000);
+            timer = setInterval(() => {
+                seconds++;
+                const val = (seconds / 3600) * 45.00;
+                document.getElementById('current-value').innerText = `R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+                
+                const h = Math.floor(seconds/3600).toString().padStart(2,'0');
+                const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
+                const s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('time-worked').innerText = `${h}:${m}:${s}`;
+            }, 1000);
         } else {
             isWorking = false;
             btn.innerText = "RETOMAR TURNO";
             btn.style.background = "var(--gold-orange)";
-            clearInterval(timerInterval);
+            clearInterval(timer);
         }
-    }
-
-    function updateEngine() {
-        secondsWorked++;
-        const value = (secondsWorked / 3600) * valorHoraCLT;
-        document.getElementById('current-value').innerText = `R$ ${value.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        
-        const h = Math.floor(secondsWorked / 3600).toString().padStart(2, '0');
-        const m = Math.floor((secondsWorked % 3600) / 60).toString().padStart(2, '0');
-        const s = (secondsWorked % 60).toString().padStart(2, '0');
-        document.getElementById('time-worked').innerText = `${h}h ${m}m ${s}s Trabalhados`;
-    }
-
-    function generatePix() {
-        const value = (secondsWorked / 3600) * valorHoraCLT;
-        if (value <= 0) return alert("Inicie o turno para gerar valores.");
-        alert(`SOLICITAÇÃO DE PIX ENVIADA!\nFavorecido: ${currentUser.nome}\nValor: R$ ${value.toFixed(2)}\n\nAguardando processamento do Gateway...`);
     }
 </script>
 
