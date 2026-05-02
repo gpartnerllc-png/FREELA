@@ -11,7 +11,7 @@
             --gold-orange: #FF9900;
             --alert-yellow: #FFCC00;
             --glass: rgba(255, 255, 255, 0.12);
-            --glass-dark: rgba(0, 0, 0, 0.6);
+            --glass-dark: rgba(0, 0, 0, 0.85);
         }
 
         * { box-sizing: border-box; }
@@ -21,103 +21,68 @@
             overflow: hidden; background: #000;
         }
 
-        /* FUNDO FULL SCREEN COM CARROSSEL */
+        /* FUNDO FULL SCREEN - IMAGENS LOCAIS OU PLACEHOLDERS MAIS ESTÁVEIS */
         .bg-wrapper {
             position: fixed; inset: 0; z-index: -2;
             background-size: cover; background-position: center;
-            animation: zoomBg 30s infinite alternate;
-        }
-        @keyframes zoomBg {
-            0% { transform: scale(1); background-image: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1920'); }
-            50% { transform: scale(1.1); background-image: url('https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1920'); }
-            100% { transform: scale(1); background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1920'); }
+            background-image: url('https://w.wallhaven.cc/full/8o/wallhaven-8o9m6j.jpg'); /* Fundo fixo mais estável */
+            filter: brightness(0.5);
         }
 
-        /* FAIXA AZUL COMPLETA (OVERLAY) */
         .overlay-blue {
             position: fixed; inset: 0; z-index: -1;
-            background: linear-gradient(135deg, rgba(0, 71, 171, 0.85), rgba(0, 122, 255, 0.7));
+            background: linear-gradient(135deg, rgba(0, 71, 171, 0.8), rgba(0, 0, 0, 0.6));
         }
 
-        .app-container {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            position: relative;
-        }
+        .app-container { width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; }
 
         /* TELA DE LOGIN 3D+ */
         #auth-screen {
             flex: 1; display: flex; align-items: center; justify-content: center;
-            padding: 20px; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px; transition: 0.8s;
         }
         .login-card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 35px;
-            padding: 50px 30px;
-            width: 100%; max-width: 450px;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4), inset 0 0 15px rgba(255,255,255,0.1);
-            transform: perspective(1000px) rotateX(2deg);
-        }
-        .login-card h1 { color: #FFF; font-weight: 900; font-size: 32px; margin: 0; letter-spacing: 3px; }
-        .login-card p { color: rgba(255,255,255,0.7); font-size: 11px; letter-spacing: 2px; margin-bottom: 30px; }
-
-        input {
-            width: 100%; padding: 20px; border-radius: 18px; border: none;
-            background: #FFF; font-size: 20px; font-weight: bold; text-align: center;
-            margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background: var(--glass); backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 35px;
+            padding: 50px 30px; width: 100%; max-width: 450px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
         /* DASHBOARD FULL WIDTH (LOGICA XLOG) */
-        #main-app { display: none; height: 100%; overflow-y: auto; padding: 25px; }
+        #main-app { display: none; height: 100%; overflow-y: auto; padding: 20px; }
         
-        .xlog-header {
-            background: var(--glass-dark); border-radius: 20px; padding: 25px;
-            border-bottom: 4px solid var(--gold-orange); margin-bottom: 20px;
-            display: flex; justify-content: space-between; align-items: center; color: #FFF;
+        .header-xlog {
+            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--gold-orange); margin-bottom: 15px;
         }
-        .xlog-user h2 { margin: 0; font-size: 24px; color: var(--gold-orange); }
-        .xlog-user span { font-size: 12px; font-weight: bold; opacity: 0.8; }
 
         .finance-panel {
-            background: #FFF; border-radius: 25px; padding: 30px;
-            margin-bottom: 25px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            background: #FFF; border-radius: 25px; padding: 25px;
+            margin-bottom: 15px; text-align: center;
         }
-        .val-total { font-size: 52px; font-weight: 900; color: #1A1A1A; margin: 10px 0; }
+        .val-total { font-size: 45px; font-weight: 900; color: #000; }
 
-        .transport-box {
-            background: #F0F4F8; padding: 15px; border-radius: 15px;
-            margin-bottom: 20px; border: 2px dashed var(--secondary-blue);
+        .transport-bar {
+            background: rgba(255,255,255,0.1); border: 1px dashed #FFF;
+            padding: 15px; border-radius: 15px; color: #FFF; margin-bottom: 20px;
         }
 
-        /* GRID DE ESCALA AMPLIADO */
-        .roster-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px; margin-bottom: 100px;
-        }
-        .roster-item {
-            background: rgba(255,255,255,0.95); padding: 20px; border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 8px solid var(--primary-blue);
-        }
-        .roster-item.priority { border-left-color: var(--gold-orange); background: #FFFDF0; }
-
-        .btn-main {
-            background: var(--gold-orange); color: #FFF; border: none;
-            padding: 22px; border-radius: 20px; font-weight: 900; font-size: 16px;
-            width: 100%; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 12px 24px rgba(255, 153, 0, 0.4);
-        }
+        .roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+        .roster-item { background: #FFF; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .roster-item.priority { border-left: 5px solid var(--gold-orange); }
 
         .footer-nav {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--glass-dark); backdrop-filter: blur(10px);
-            padding: 20px; display: flex; gap: 10px; z-index: 100;
+            padding: 15px; display: flex; gap: 10px; background: rgba(0,0,0,0.7);
         }
-        
-        ::-webkit-scrollbar { width: 0; }
+
+        .btn-main {
+            flex: 1; padding: 18px; border-radius: 15px; border: none;
+            font-weight: 900; cursor: pointer;
+        }
+
+        input { width: 100%; padding: 15px; border-radius: 12px; border: none; margin-bottom: 10px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -127,133 +92,122 @@
 
 <div class="app-container">
     
-    <!-- LOGIN 3D+ -->
     <div id="auth-screen">
         <div class="login-card">
-            <h1>FREELA</h1>
-            <p>SISTEMA DE ESCALA GIG • v2.6</p>
-            <input type="tel" id="cpf-input" placeholder="000.000.000-00" maxlength="11">
-            <button class="btn-main" onclick="startApp()">ENTRAR NO SISTEMA</button>
-            <div id="auth-error" style="color: var(--alert-yellow); font-size: 12px; margin-top: 15px; display: none; font-weight: bold;">CPF NÃO AUTORIZADO NA ESCALA ATUAL</div>
+            <h1 style="color:#FFF; margin:0">FREELA</h1>
+            <p style="color:rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 2px;">FREELAS</p>
+            <input type="tel" id="cpf-input" placeholder="000.000.000-00">
+            <button class="btn-main" style="background: var(--gold-orange); color:#000;" onclick="startApp()">ENTRAR NO SISTEMA</button>
         </div>
     </div>
 
-    <!-- DASHBOARD ESTILO XLOG -->
     <div id="main-app">
-        <div class="xlog-header">
-            <div class="xlog-user">
-                <span id="label-cpf">ID: 000.000.000-00</span>
-                <h2 id="user-name">Carregando...</h2>
+        <div class="header-xlog">
+            <div style="color:#FFF">
+                <small id="display-cpf">ID: 000.***.***-00</small>
+                <h3 id="display-nome" style="margin:0; color: var(--gold-orange);">Nome</h3>
             </div>
-            <div style="text-align: right;">
-                <div style="background: var(--gold-orange); padding: 5px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; color: #000;">OPERADOR ATIVO</div>
-            </div>
+            <div style="background:var(--gold-orange); padding: 5px 10px; border-radius:8px; font-size:10px; font-weight:bold;">OPERADOR ATIVO</div>
         </div>
 
         <div class="finance-panel">
-            <div class="clt-info" style="font-weight: 800; color: #666; font-size: 12px;">AGREGADO EM TEMPO REAL (CLT+DSR)</div>
+            <small style="font-weight:bold; color:#666;">AGREGADO EM TEMPO REAL (CLT+DSR)</small>
             <div class="val-total" id="current-value">R$ 0,00</div>
-            <div id="time-worked" style="font-weight: 900; color: var(--secondary-blue); font-size: 18px;">00:00:00</div>
+            <div id="time-worked" style="color:var(--secondary-blue); font-weight:bold;">00:00:00</div>
         </div>
 
-        <div class="transport-box">
-            <label style="font-size: 11px; font-weight: 900; color: var(--primary-blue); display: block; margin-bottom: 5px;">CONFIRMAR TRANSPORTE INICIAL (OBRIGATÓRIO)</label>
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-weight: bold; font-size: 18px;">R$</span>
-                <input type="number" id="trans-input" value="25.00" style="margin:0; width: 80%; background: transparent; box-shadow: none; text-align: right;">
+        <div class="transport-bar">
+            <small style="display:block; margin-bottom:5px;">VALOR DE TRANSPORTE FIXO (OBRIGATÓRIO)</small>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:bold;">R$</span>
+                <input type="number" id="input-transporte" style="margin:0; width: 80px; background:transparent; color:#FFF; border-bottom:1px solid #FFF; border-radius:0;" value="24.00">
             </div>
         </div>
 
-        <h3 style="color: #FFF; margin-bottom: 15px;">Escala de Oportunidades</h3>
-        <div class="roster-grid" id="roster-container">
-            <!-- Dinâmico -->
-        </div>
+        <div class="roster-grid" id="roster"></div>
 
         <div class="footer-nav">
-            <button class="btn-main" id="work-btn" onclick="toggleShift()" style="flex: 2;">INICIAR TURNO</button>
-            <button class="btn-main" onclick="alert('Gerando Cobrança...')" style="flex: 1; background: var(--secondary-blue); box-shadow: none;">PIX</button>
+            <button class="btn-main" id="btn-shift" onclick="toggleShift()" style="background:#FFF;">INICIAR TURNO</button>
+            <button class="btn-main" onclick="gerarPix()" style="background:var(--secondary-blue); color:#FFF;">PIX</button>
         </div>
     </div>
 </div>
 
 <script>
-    // BASE DE DADOS FIXA PARA VALIDAR
-    const database = [
-        { cpf: "04037096102", nome: "Mikaele N.", cargo: "Garçonete", renda: 0, fixoTrans: 25.00 },
-        { cpf: "34259998854", nome: "Cristian R.", cargo: "Estrategista", renda: 450.00, fixoTrans: 0 },
-        { cpf: "55566677788", nome: "Ana Costa", cargo: "Logística", renda: 0, fixoTrans: 15.00 }
+    const db = [
+        { cpf: "34259998854", nome: "Cristian R.", trans: 24.00, renda: 450 },
+        { cpf: "04037096102", nome: "Mikaele N.", trans: 24.00, renda: 0 },
+        { cpf: "12345678900", nome: "Ana Costa", trans: 24.00, renda: 0 }
     ];
 
-    let activeUser = null;
-    let isWorking = false;
-    let seconds = 0;
-    let timer;
+    let user = null, isWorking = false, sec = 0, timer, totalGeral = 0;
 
     function startApp() {
         const cpf = document.getElementById('cpf-input').value.replace(/\D/g, '');
-        const user = database.find(u => u.cpf === cpf);
-
+        user = db.find(u => u.cpf === cpf);
         if(user) {
-            activeUser = user;
-            document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
-            document.getElementById('auth-screen').style.opacity = '0';
-            
-            setTimeout(() => {
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-                document.getElementById('user-name').innerText = user.nome;
-                document.getElementById('label-cpf').innerText = `ID: ${user.cpf}`;
-                document.getElementById('trans-input').value = user.fixoTrans.toFixed(2);
-                renderRoster();
-            }, 600);
-        } else {
-            document.getElementById('auth-error').style.display = 'block';
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('display-nome').innerText = user.nome;
+            document.getElementById('display-cpf').innerText = `ID: ${user.cpf}`;
+            document.getElementById('input-transporte').value = user.trans.toFixed(2);
+            render();
         }
     }
 
-    function renderRoster() {
-        const container = document.getElementById('roster-container');
-        container.innerHTML = "";
-        database.sort((a,b) => a.renda - b.renda).forEach(w => {
-            const priority = w.renda === 0;
-            container.innerHTML += `
-                <div class="roster-item ${priority ? 'priority' : ''}">
-                    <div>
-                        <strong style="font-size:16px;">${w.nome}</strong><br>
-                        <small>${w.cargo} | R$ ${w.renda.toFixed(2)}</small>
-                    </div>
-                    <div style="color: ${priority ? 'var(--gold-orange)' : '#666'}; font-weight: 900; font-size: 11px;">
-                        ${priority ? 'PRIORIDADE ⭐' : 'DISPONÍVEL'}
-                    </div>
-                </div>
-            `;
-        });
+    function render() {
+        const roster = document.getElementById('roster');
+        roster.innerHTML = db.sort((a,b) => a.renda - b.renda).map(u => `
+            <div class="roster-item ${u.renda === 0 ? 'priority' : ''}">
+                <div><b>${u.nome}</b><br><small>R$ ${u.renda.toFixed(2)}</small></div>
+                <div style="font-size:10px; font-weight:bold;">${u.renda === 0 ? 'PRIORIDADE' : 'DISPONÍVEL'}</div>
+            </div>
+        `).join('');
     }
 
     function toggleShift() {
-        const btn = document.getElementById('work-btn');
+        const btn = document.getElementById('btn-shift');
         if(!isWorking) {
             isWorking = true;
-            btn.innerText = "PARAR TURNO (EM OPERAÇÃO)";
+            btn.innerText = "PAUSAR TURNO";
             btn.style.background = "#FF3B30";
+            btn.style.color = "#FFF";
             timer = setInterval(() => {
-                seconds++;
-                const val = (seconds / 3600) * 45.00;
-                document.getElementById('current-value').innerText = `R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
-                
-                const h = Math.floor(seconds/3600).toString().padStart(2,'0');
-                const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
-                const s = (seconds%60).toString().padStart(2,'0');
+                sec++;
+                totalGeral = (sec / 3600) * 45.00;
+                document.getElementById('current-value').innerText = `R$ ${totalGeral.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+                const h = Math.floor(sec/3600).toString().padStart(2,'0');
+                const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
+                const s = (sec%60).toString().padStart(2,'0');
                 document.getElementById('time-worked').innerText = `${h}:${m}:${s}`;
             }, 1000);
         } else {
             isWorking = false;
             btn.innerText = "RETOMAR TURNO";
-            btn.style.background = "var(--gold-orange)";
+            btn.style.background = "#FFF";
+            btn.style.color = "#000";
             clearInterval(timer);
         }
     }
-</script>
 
+    function gerarPix() {
+        const transp = parseFloat(document.getElementById('input-transporte').value) || 0;
+        const totalComTransporte = totalGeral + transp;
+        const horas = document.getElementById('time-worked').innerText;
+
+        if(totalGeral <= 0) return alert("Erro: O turno precisa estar em andamento para gerar valores.");
+
+        alert(`PROPOSTA DE PAGAMENTO (SandxCDD)
+----------------------------------
+Operador: ${user.nome}
+Tempo: ${horas}
+Ganhos (Hora): R$ ${totalGeral.toFixed(2)}
+Transporte: R$ ${transp.toFixed(2)}
+----------------------------------
+TOTAL A RECEBER: R$ ${totalComTransporte.toFixed(2)}
+
+Gerando QR Code PIX...`);
+    }
+</script>
 </body>
 </html>
