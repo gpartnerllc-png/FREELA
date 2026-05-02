@@ -1,228 +1,225 @@
-<!DOCTYPE html>
+</html><!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FREELAS | Operação Full Scale</title>
+    <!-- Importando a biblioteca de QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --primary-blue: #0047AB;
-            --secondary-blue: #007AFF;
-            --gold-orange: #FF9900;
-            --glass: rgba(255, 255, 255, 0.1);
-            --glass-dark: rgba(0, 0, 0, 0.8);
+            --apple-glass: rgba(255, 255, 255, 0.4);
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC05;
+            --google-green: #34A853;
+            --tesla-red: #E01E3C;
+            --vibrant-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%; width: 100%;
-            font-family: "SF Pro Display", sans-serif;
-            background: #000; overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica;
+            overflow: hidden;
+            /* Fundo estilo Aladin IA / Vibrante */
+            background: radial-gradient(circle at top left, #4158D0, #C850C0 46%, #FFCC70 100%);
+            background-attachment: fixed;
         }
 
-        /* FUNDO COM IMAGEM E SOBREPOSIÇÃO AZUL */
-        .bg-layer {
-            position: fixed; inset: 0; z-index: -2;
-            background: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1920') no-repeat center center;
-            background-size: cover;
-            filter: brightness(0.4);
+        /* Camada de profundidade 3D */
+        .glass-container {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 95%; height: 90%;
+            background: var(--apple-glass);
+            backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; padding: 30px;
+            box-sizing: border-box;
         }
 
-        .blue-gradient {
-            position: fixed; inset: 0; z-index: -1;
-            background: linear-gradient(180deg, rgba(0, 71, 171, 0.5) 0%, rgba(0, 0, 0, 0.8) 100%);
+        .header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+        .user-pill {
+            background: #FFF; padding: 10px 20px; border-radius: 50px;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        /* LOGIN 3D */
-        #auth-screen {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .login-card {
-            background: var(--glass); backdrop-filter: blur(20px);
-            padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
-            text-align: center; color: #FFF; width: 320px;
+        .status-badge {
+            background: var(--google-green); color: white;
+            padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
         }
 
-        /* DASHBOARD LATERALIZADO */
-        #main-app { display: none; padding: 20px; height: 100vh; color: #FFF; }
+        .main-content { display: flex; gap: 20px; flex: 1; margin-top: 30px; }
+
+        /* Card Financeiro Tesla-Style */
+        .card-finance {
+            flex: 1.5; background: #FFF; border-radius: 30px; padding: 30px;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .value-display { font-size: 64px; font-weight: 800; color: #1d1d1f; letter-spacing: -2px; }
+
+        /* Lista Lateral Google-Style */
+        .sidebar { flex: 1; background: rgba(255,255,255,0.3); border-radius: 30px; padding: 20px; overflow-y: auto; }
         
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        .main-layout { display: flex; gap: 20px; height: calc(100% - 150px); }
-
-        /* PAINEL ESQUERDO: FINANCEIRO */
-        .left-panel { flex: 1.5; display: flex; flex-direction: column; gap: 15px; }
-        
-        .finance-card {
-            background: #FFF; color: #000; border-radius: 20px; padding: 20px;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .worker-item {
+            background: #FFF; margin-bottom: 15px; padding: 15px; border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: transform 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .val-total { font-size: 40px; font-weight: 900; margin: 10px 0; }
+        .worker-item:hover { transform: scale(1.02); }
 
-        .transport-box {
-            background: rgba(255,255,255,0.1); border: 1px dashed #FFF;
-            padding: 15px; border-radius: 15px;
+        /* Modal do PIX 3D */
+        #pix-modal {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(15px);
+            align-items: center; justify-content: center;
         }
-
-        /* PAINEL DIREITO: ESCALA (ESTILO ESTAFF) */
-        .right-panel { flex: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 20px; padding: 15px; }
-        
-        .worker-card {
-            background: #FFF; color: #000; padding: 12px; border-radius: 12px;
-            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-            font-size: 13px; border-left: 5px solid #ccc;
-        }
-        .worker-card.active { border-left-color: #4CD964; background: #f0fff0; }
-        .worker-card.priority { border-left-color: var(--gold-orange); }
-
-        /* FOOTER */
-        .footer-actions {
-            position: fixed; bottom: 20px; left: 20px; right: 20px;
-            display: flex; gap: 15px;
-        }
-        .btn {
-            flex: 1; padding: 20px; border-radius: 15px; border: none;
-            font-weight: 900; cursor: pointer; text-transform: uppercase;
+        .pix-card {
+            background: #FFF; padding: 40px; border-radius: 40px; text-align: center;
+            width: 350px; box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
 
-        input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin: 10px 0; text-align: center; }
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
+        .btn-main {
+            flex: 1; padding: 20px; border-radius: 20px; border: none;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-tesla { background: #000; color: #FFF; }
+        .btn-google { background: var(--google-blue); color: #FFF; }
+        .btn-tesla:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-<div class="bg-layer"></div>
-<div class="blue-gradient"></div>
+<div class="glass-container">
+    <div class="header">
+        <div class="user-pill">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--vibrant-gradient)"></div>
+            <div>
+                <strong style="display:block">Cristian R.</strong>
+                <small style="color:#666">ID: 34259998854</small>
+            </div>
+        </div>
+        <div style="text-align: right">
+            <div class="status-badge" id="status-label">AGUARDANDO</div>
+            <h2 id="clock" style="margin: 5px 0 0 0; font-family: monospace;">20:30:56</h2>
+        </div>
+    </div>
 
-<div id="auth-screen">
-    <div class="login-card">
-        <h2 style="margin:0">FREELA</h2>
-        <p style="font-size:10px; letter-spacing:2px">SISTEMA DE ESCALA GIG</p>
-        <input type="tel" id="cpf-input" placeholder="000.000.000-00">
-        <button class="btn" style="background:var(--gold-orange); color:#000; width:100%" onclick="login()">ENTRAR</button>
-        <p id="msg-erro" style="color:red; font-size:11px; display:none; margin-top:10px">CPF não cadastrado na Receita/Escala</p>
+    <div class="main-content">
+        <div class="card-finance">
+            <span style="color: var(--google-blue); font-weight: bold;">AGREGADO EM TEMPO REAL</span>
+            <div class="value-display" id="total-val">R$ 0,000</div>
+            <div id="timer" style="font-size: 18px; color: #888;">00:00:00 TRABALHADO</div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #f5f5f7; border-radius: 20px;">
+                <label style="font-size: 12px; color: #666; font-weight: bold;">TRANSPORTE (AJUSTÁVEL)</label>
+                <div style="display:flex; align-items:center; font-size: 24px; font-weight: bold;">
+                    R$ <input type="number" id="inp-transp" value="24.00" style="border:none; background:transparent; font-size:24px; font-weight:bold; width: 100px; margin-left: 10px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar" id="roster">
+            <!-- Gerado via JS -->
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-main btn-tesla" id="btn-action" onclick="toggleShift()">INICIAR TURNO</button>
+        <button class="btn-main btn-google" onclick="showPix()">GERAR PIX</button>
     </div>
 </div>
 
-<div id="main-app">
-    <div class="top-bar">
-        <div>
-            <small id="user-id">ID: 00000000000</small>
-            <h3 id="user-name" style="margin:0; color:var(--gold-orange)">Nome do Freela</h3>
-        </div>
-        <div id="real-clock" style="font-family:monospace; background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:20px">00:00:00</div>
-    </div>
-
-    <div class="main-layout">
-        <!-- LADO ESQUERDO -->
-        <div class="left-panel">
-            <div class="finance-card">
-                <small style="font-weight:bold; color:#666">AGREGADO REAL (CLT+DSR)</small>
-                <div class="val-total" id="current-val">R$ 0,00</div>
-                <div id="timer-display" style="color:var(--secondary-blue); font-weight:bold">00:00:00 TRABALHADO</div>
-            </div>
-
-            <div class="transport-box">
-                <small>VALOR TRANSPORTE FIXO</small>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px">
-                    <span>R$</span>
-                    <input type="number" id="val-transp" value="24.00" style="margin:0; width:80px; background:transparent; color:#FFF; border-bottom:1px solid #FFF">
-                </div>
-            </div>
-            
-            <div style="font-size:12px; color:rgba(255,255,255,0.7)">
-                * Validação via Base SandxCDD / Sinais de Operação Ativa
-            </div>
-        </div>
-
-        <!-- LADO DIREITO (ESCALA) -->
-        <div class="right-panel">
-            <small style="font-weight:bold; display:block; margin-bottom:10px">ESCALA ATIVA (ESTAFF MODE)</small>
-            <div id="roster-list"></div>
-        </div>
-    </div>
-
-    <div class="footer-actions">
-        <button class="btn" id="btn-shift" onclick="toggleShift()" style="background:#FFF">INICIAR TURNO</button>
-        <button class="btn" onclick="gerarPix()" style="background:var(--secondary-blue); color:#FFF">GERAR PIX</button>
+<!-- Modal PIX -->
+<div id="pix-modal">
+    <div class="pix-card">
+        <h2 style="margin-top:0">Pagamento PIX</h2>
+        <div id="qrcode" style="display: flex; justify-content: center; margin: 20px 0;"></div>
+        <p id="pix-details" style="font-size: 14px; color: #444;"></p>
+        <button class="btn-main btn-tesla" style="width: 100%" onclick="closePix()">FECHAR</button>
     </div>
 </div>
 
 <script>
+    let seconds = 0, timerInterval = null, isRunning = false;
     const db = [
-        { cpf: "34259998854", nome: "Cristian R.", transp: 24.00, renda: 450, cargo: "Estrategista" },
-        { cpf: "04037096102", nome: "Mikaele N.", transp: 24.00, renda: 0, cargo: "Garçonete" },
-        { cpf: "12345678900", nome: "Ana Costa", transp: 24.00, renda: 0, cargo: "Logística" }
+        { nome: "Cristian R.", cargo: "Estrategista", ativo: false },
+        { nome: "Mikaele N.", cargo: "Garçonete", ativo: false },
+        { nome: "Ana Costa", cargo: "Logística", ativo: false }
     ];
 
-    let user = null, isWorking = false, sec = 0, timer, totalGeral = 0;
-
-    // Relógio em tempo real
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('real-clock').innerText = now.toLocaleTimeString();
-    }, 1000);
-
-    function login() {
-        const cpf = document.getElementById('cpf-input').value.replace(/\D/g, '');
-        user = db.find(u => u.cpf === cpf);
-        if(user) {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            document.getElementById('user-name').innerText = user.nome;
-            document.getElementById('user-id').innerText = `ID: ${user.cpf}`;
-            document.getElementById('val-transp').value = user.transp.toFixed(2);
-            renderRoster();
-        } else {
-            document.getElementById('msg-erro').style.display = 'block';
-        }
+    function updateClock() {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
     }
+    setInterval(updateClock, 1000);
 
     function renderRoster() {
-        const list = document.getElementById('roster-list');
-        list.innerHTML = db.map(u => `
-            <div class="worker-card ${u.cpf === user.cpf && isWorking ? 'active' : (u.renda === 0 ? 'priority' : '')}">
+        const roster = document.getElementById('roster');
+        roster.innerHTML = db.map(p => `
+            <div class="worker-item">
                 <div>
-                    <b>${u.nome}</b><br>
-                    <small>${u.cargo}</small>
+                    <strong>${p.nome}</strong><br>
+                    <small style="color: #888">${p.cargo}</small>
                 </div>
-                <div style="text-align:right">
-                    <small>${u.renda === 0 ? 'PRIORIDADE' : 'DISPONÍVEL'}</small><br>
-                    <b>R$ ${u.renda.toFixed(2)}</b>
-                </div>
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: ${p.ativo ? '#34A853' : '#ddd'}"></div>
             </div>
         `).join('');
     }
 
     function toggleShift() {
-        const btn = document.getElementById('btn-shift');
-        if(!isWorking) {
-            isWorking = true;
-            btn.innerText = "PARAR TURNO";
-            btn.style.background = "#FF3B30"; btn.style.color = "#FFF";
-            timer = setInterval(() => {
-                sec++;
-                totalGeral = (sec / 3600) * 45.00; // Valor CLT
-                document.getElementById('current-val').innerText = `R$ ${totalGeral.toLocaleString('pt-BR', {minimumFractionDigits:3})}`;
-                const h = Math.floor(sec/3600).toString().padStart(2,'0');
-                const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
-                const s = (sec%60).toString().padStart(2,'0');
-                document.getElementById('timer-display').innerText = `${h}:${m}:${s} TRABALHADO`;
+        isRunning = !isRunning;
+        const btn = document.getElementById('btn-action');
+        const status = document.getElementById('status-label');
+        db[0].ativo = isRunning;
+        
+        if(isRunning) {
+            btn.innerText = "PARAR TURNO"; btn.style.background = "#EA4335";
+            status.innerText = "OPERANDO"; status.style.background = "#4285F4";
+            timerInterval = setInterval(() => {
+                seconds++;
+                let val = (seconds / 3600) * 45; // Simulação de valor
+                document.getElementById('total-val').innerText = `R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits:3})}`;
+                const h = Math.floor(seconds/3600).toString().padStart(2,'0');
+                const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
+                const s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${h}:${m}:${s} TRABALHADO`;
             }, 1000);
         } else {
-            isWorking = false;
-            btn.innerText = "RETOMAR TURNO";
-            btn.style.background = "#FFF"; btn.style.color = "#000";
-            clearInterval(timer);
+            btn.innerText = "RETOMAR TURNO"; btn.style.background = "#000";
+            status.innerText = "PAUSADO"; status.style.background = "#FBBC05";
+            clearInterval(timerInterval);
         }
         renderRoster();
     }
 
-    function gerarPix() {
-        const tr = parseFloat(document.getElementById('val-transp').value) || 0;
-        const final = totalGeral + tr;
-        if(totalGeral <= 0) return alert("Turno não iniciado.");
-        
-        alert(`GERANDO COBRANÇA PIX (SandxCDD)\n--------------------------\nBase: R$ ${totalGeral.toFixed(2)}\nTransporte: R$ ${tr.toFixed(2)}\nTOTAL: R$ ${final.toFixed(2)}\n\nStatus: Enviado para validação do empregador.`);
+    function showPix() {
+        const modal = document.getElementById('pix-modal');
+        const qrContainer = document.getElementById('qrcode');
+        const transp = parseFloat(document.getElementById('inp-transp').value) || 0;
+        const total = ((seconds/3600)*45) + transp;
+
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, {
+            text: `00020126330014BR.GOV.BCB.PIX0111YOURCNPJHERE520400005303986540${total.toFixed(2)}5802BR5915SANDXCDD6008BRASILIA62070503***6304`,
+            width: 200, height: 200
+        });
+
+        document.getElementById('pix-details').innerText = `Valor Total: R$ ${total.toFixed(2)}\nBeneficiário: SandxCDD`;
+        modal.style.display = 'flex';
     }
+
+    function closePix() { document.getElementById('pix-modal').style.display = 'none'; }
+    
+    renderRoster();
 </script>
+
 </body>
 </html>
