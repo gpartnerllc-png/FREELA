@@ -102,7 +102,7 @@
 </head>
 <body>
 
-<!-- PRIMEIRA TELA: LOGIN -->
+<!-- TELA DE LOGIN -->
 <div id="auth-screen">
     <div class="login-card">
         <h1 style="margin:0; font-size: 24px;">X-PARTNER</h1>
@@ -113,15 +113,15 @@
     </div>
 </div>
 
-<!-- SEGUNDA TELA: DASHBOARD (SEU MODELO TOP) -->
+<!-- DASHBOARD -->
 <div id="main-app">
     <div class="glass-container">
         <div class="header">
             <div class="user-pill">
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--vibrant-gradient)"></div>
                 <div>
-                    <strong id="logged-name">Cristian R.</strong>
-                    <small id="logged-id" style="color:#666">ID: 00000000000</small>
+                    <strong id="logged-name">---</strong>
+                    <small id="logged-id" style="color:#666">ID: ---</small>
                 </div>
             </div>
             <div style="text-align: right">
@@ -132,12 +132,12 @@
 
         <div class="main-content">
             <div class="card-finance">
-                <span style="color: var(--google-blue); font-weight: bold;">TEMPO REAL</span>
+                <span style="color: var(--google-blue); font-weight: bold;">AGREGADO EM TEMPO REAL</span>
                 <div class="value-display" id="total-val">R$ 0,000</div>
                 <div id="timer" style="font-size: 18px; color: #888;">00:00:00 TRABALHADO</div>
                 
                 <div style="margin-top: 30px; padding: 20px; background: #f5f5f7; border-radius: 20px;">
-                    <label style="font-size: 12px; color: #666; font-weight: bold;">V.T(AJUSTÁVEL)</label>
+                    <label style="font-size: 12px; color: #666; font-weight: bold;">TRANSPORTE (AJUSTÁVEL)</label>
                     <div style="display:flex; align-items:center; font-size: 24px; font-weight: bold;">
                         R$ <input type="number" id="inp-transp" value="24.00" style="border:none; background:transparent; font-size:24px; font-weight:bold; width: 100px; margin-left: 10px;">
                     </div>
@@ -154,7 +154,6 @@
     </div>
 </div>
 
-<!-- MODAL PIX -->
 <div id="pix-modal">
     <div class="pix-card">
         <h2 style="margin-top:0">Pagamento PIX</h2>
@@ -166,6 +165,8 @@
 
 <script>
     let seconds = 0, timerInterval = null, isRunning = false;
+    let currentUser = null; // Variável para armazenar quem logou
+
     const db = [
         { cpf: "34259998854", nome: "Cristian R.", cargo: "Estrategista", ativo: false },
         { cpf: "04037096102", nome: "Mikaele N.", cargo: "Garçonete", ativo: false },
@@ -174,13 +175,16 @@
 
     function login() {
         const input = document.getElementById('cpf-input').value.replace(/\D/g, '');
-        const user = db.find(u => u.cpf === input);
-        if(user) {
+        currentUser = db.find(u => u.cpf === input);
+        
+        if(currentUser) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             setTimeout(() => { document.getElementById('main-app').style.opacity = '1'; }, 50);
-            document.getElementById('logged-name').innerText = user.nome;
-            document.getElementById('logged-id').innerText = `ID: ${user.cpf}`;
+            
+            document.getElementById('logged-name').innerText = currentUser.nome;
+            document.getElementById('logged-id').innerText = `ID: ${currentUser.cpf}`;
+            
             renderRoster();
         } else {
             document.getElementById('msg-erro').style.display = 'block';
@@ -200,6 +204,7 @@
                     <strong>${p.nome}</strong><br>
                     <small style="color: #888">${p.cargo}</small>
                 </div>
+                <!-- A bolinha agora checa o status individual de cada CPF -->
                 <div style="width: 12px; height: 12px; border-radius: 50%; background: ${p.ativo ? '#34A853' : '#ddd'}"></div>
             </div>
         `).join('');
@@ -209,7 +214,9 @@
         isRunning = !isRunning;
         const btn = document.getElementById('btn-action');
         const status = document.getElementById('status-label');
-        db[0].ativo = isRunning;
+        
+        // CORREÇÃO: Atualiza o status do usuário que está logado no momento
+        currentUser.ativo = isRunning;
         
         if(isRunning) {
             btn.innerText = "PARAR TURNO"; btn.style.background = "#EA4335";
