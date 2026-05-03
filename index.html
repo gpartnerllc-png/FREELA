@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FREELAS | Operação Full Scale</title>
-    <!-- Importando a biblioteca de QR Code -->
+    <!-- Biblioteca de QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
@@ -13,7 +13,6 @@
             --google-red: #EA4335;
             --google-yellow: #FBBC05;
             --google-green: #34A853;
-            --tesla-red: #E01E3C;
             --vibrant-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
@@ -21,12 +20,29 @@
             margin: 0; padding: 0; height: 100%; width: 100%;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica;
             overflow: hidden;
-            /* Fundo estilo Aladin IA / Vibrante */
             background: radial-gradient(circle at top left, #4158D0, #C850C0 46%, #FFCC70 100%);
             background-attachment: fixed;
         }
 
-        /* Camada de profundidade 3D */
+        /* --- TELA DE LOGIN --- */
+        #auth-screen {
+            position: fixed; inset: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+        .login-card {
+            background: var(--apple-glass);
+            padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.5);
+            text-align: center; width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        .login-card input {
+            width: 100%; padding: 15px; border-radius: 15px; border: none;
+            margin: 20px 0; text-align: center; font-size: 18px; outline: none;
+        }
+
+        /* --- DASHBOARD PRINCIPAL --- */
+        #main-app { display: none; opacity: 0; transition: opacity 0.5s ease-in; }
+
         .glass-container {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -41,42 +57,40 @@
         }
 
         .header { display: flex; justify-content: space-between; align-items: flex-start; }
-
         .user-pill {
             background: #FFF; padding: 10px 20px; border-radius: 50px;
             display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-
         .status-badge {
             background: var(--google-green); color: white;
             padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
         }
 
         .main-content { display: flex; gap: 20px; flex: 1; margin-top: 30px; }
-
-        /* Card Financeiro Tesla-Style */
         .card-finance {
             flex: 1.5; background: #FFF; border-radius: 30px; padding: 30px;
             display: flex; flex-direction: column; justify-content: center;
-            position: relative; overflow: hidden;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
         }
-
         .value-display { font-size: 64px; font-weight: 800; color: #1d1d1f; letter-spacing: -2px; }
 
-        /* Lista Lateral Google-Style */
         .sidebar { flex: 1; background: rgba(255,255,255,0.3); border-radius: 30px; padding: 20px; overflow-y: auto; }
-        
         .worker-item {
             background: #FFF; margin-bottom: 15px; padding: 15px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .worker-item:hover { transform: scale(1.02); }
 
-        /* Modal do PIX 3D */
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
+        .btn-main {
+            flex: 1; padding: 20px; border-radius: 20px; border: none;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-tesla { background: #000; color: #FFF; }
+        .btn-google { background: var(--google-blue); color: #FFF; }
+
         #pix-modal {
-            display: none; position: fixed; inset: 0; z-index: 100;
+            display: none; position: fixed; inset: 0; z-index: 2000;
             background: rgba(0,0,0,0.4); backdrop-filter: blur(15px);
             align-items: center; justify-content: center;
         }
@@ -84,61 +98,63 @@
             background: #FFF; padding: 40px; border-radius: 40px; text-align: center;
             width: 350px; box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
-
-        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
-        .btn-main {
-            flex: 1; padding: 20px; border-radius: 20px; border: none;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-tesla { background: #000; color: #FFF; }
-        .btn-google { background: var(--google-blue); color: #FFF; }
-        .btn-tesla:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-<div class="glass-container">
-    <div class="header">
-        <div class="user-pill">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--vibrant-gradient)"></div>
-            <div>
-                <strong style="display:block">Cristian R.</strong>
-                <small style="color:#666">ID: 34259998854</small>
-            </div>
-        </div>
-        <div style="text-align: right">
-            <div class="status-badge" id="status-label">AGUARDANDO</div>
-            <h2 id="clock" style="margin: 5px 0 0 0; font-family: monospace;">20:30:56</h2>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="card-finance">
-            <span style="color: var(--google-blue); font-weight: bold;">AGREGADO EM TEMPO REAL</span>
-            <div class="value-display" id="total-val">R$ 0,000</div>
-            <div id="timer" style="font-size: 18px; color: #888;">00:00:00 TRABALHADO</div>
-            
-            <div style="margin-top: 30px; padding: 20px; background: #f5f5f7; border-radius: 20px;">
-                <label style="font-size: 12px; color: #666; font-weight: bold;">TRANSPORTE (AJUSTÁVEL)</label>
-                <div style="display:flex; align-items:center; font-size: 24px; font-weight: bold;">
-                    R$ <input type="number" id="inp-transp" value="24.00" style="border:none; background:transparent; font-size:24px; font-weight:bold; width: 100px; margin-left: 10px;">
-                </div>
-            </div>
-        </div>
-
-        <div class="sidebar" id="roster">
-            <!-- Gerado via JS -->
-        </div>
-    </div>
-
-    <div class="btn-group">
-        <button class="btn-main btn-tesla" id="btn-action" onclick="toggleShift()">INICIAR TURNO</button>
-        <button class="btn-main btn-google" onclick="showPix()">GERAR PIX</button>
+<!-- PRIMEIRA TELA: LOGIN -->
+<div id="auth-screen">
+    <div class="login-card">
+        <h1 style="margin:0; font-size: 24px;">SandxCDD</h1>
+        <p style="font-size: 12px; letter-spacing: 2px;">PAINEL DE OPERAÇÕES</p>
+        <input type="tel" id="cpf-input" placeholder="Digite seu CPF">
+        <button class="btn-main btn-tesla" style="width: 100%" onclick="login()">ACESSAR SISTEMA</button>
+        <p id="msg-erro" style="color:var(--google-red); font-size:12px; display:none; margin-top:15px">CPF não autorizado.</p>
     </div>
 </div>
 
-<!-- Modal PIX -->
+<!-- SEGUNDA TELA: DASHBOARD (SEU MODELO TOP) -->
+<div id="main-app">
+    <div class="glass-container">
+        <div class="header">
+            <div class="user-pill">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--vibrant-gradient)"></div>
+                <div>
+                    <strong id="logged-name">Cristian R.</strong>
+                    <small id="logged-id" style="color:#666">ID: 00000000000</small>
+                </div>
+            </div>
+            <div style="text-align: right">
+                <div class="status-badge" id="status-label">AGUARDANDO</div>
+                <h2 id="clock" style="margin: 5px 0 0 0; font-family: monospace;">00:00:00</h2>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card-finance">
+                <span style="color: var(--google-blue); font-weight: bold;">AGREGADO EM TEMPO REAL</span>
+                <div class="value-display" id="total-val">R$ 0,000</div>
+                <div id="timer" style="font-size: 18px; color: #888;">00:00:00 TRABALHADO</div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #f5f5f7; border-radius: 20px;">
+                    <label style="font-size: 12px; color: #666; font-weight: bold;">TRANSPORTE (AJUSTÁVEL)</label>
+                    <div style="display:flex; align-items:center; font-size: 24px; font-weight: bold;">
+                        R$ <input type="number" id="inp-transp" value="24.00" style="border:none; background:transparent; font-size:24px; font-weight:bold; width: 100px; margin-left: 10px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar" id="roster"></div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-main btn-tesla" id="btn-action" onclick="toggleShift()">INICIAR TURNO</button>
+            <button class="btn-main btn-google" onclick="showPix()">GERAR PIX</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PIX -->
 <div id="pix-modal">
     <div class="pix-card">
         <h2 style="margin-top:0">Pagamento PIX</h2>
@@ -151,10 +167,25 @@
 <script>
     let seconds = 0, timerInterval = null, isRunning = false;
     const db = [
-        { nome: "Cristian R.", cargo: "Estrategista", ativo: false },
-        { nome: "Mikaele N.", cargo: "Garçonete", ativo: false },
-        { nome: "Ana Costa", cargo: "Logística", ativo: false }
+        { cpf: "34259998854", nome: "Cristian R.", cargo: "Estrategista", ativo: false },
+        { cpf: "04037096102", nome: "Mikaele N.", cargo: "Garçonete", ativo: false },
+        { cpf: "12345678900", nome: "Ana Costa", cargo: "Logística", ativo: false }
     ];
+
+    function login() {
+        const input = document.getElementById('cpf-input').value.replace(/\D/g, '');
+        const user = db.find(u => u.cpf === input);
+        if(user) {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            setTimeout(() => { document.getElementById('main-app').style.opacity = '1'; }, 50);
+            document.getElementById('logged-name').innerText = user.nome;
+            document.getElementById('logged-id').innerText = `ID: ${user.cpf}`;
+            renderRoster();
+        } else {
+            document.getElementById('msg-erro').style.display = 'block';
+        }
+    }
 
     function updateClock() {
         document.getElementById('clock').innerText = new Date().toLocaleTimeString();
@@ -185,7 +216,7 @@
             status.innerText = "OPERANDO"; status.style.background = "#4285F4";
             timerInterval = setInterval(() => {
                 seconds++;
-                let val = (seconds / 3600) * 45; // Simulação de valor
+                let val = (seconds / 3600) * 45; 
                 document.getElementById('total-val').innerText = `R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits:3})}`;
                 const h = Math.floor(seconds/3600).toString().padStart(2,'0');
                 const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
@@ -208,7 +239,7 @@
 
         qrContainer.innerHTML = "";
         new QRCode(qrContainer, {
-            text: `00020126330014BR.GOV.BCB.PIX0111YOURCNPJHERE520400005303986540${total.toFixed(2)}5802BR5915SANDXCDD6008BRASILIA62070503***6304`,
+            text: `00020126330014BR.GOV.BCB.PIX0111SUACHAVEAQUI520400005303986540${total.toFixed(2)}5802BR5915SANDXCDD6008BRASILIA62070503***6304`,
             width: 200, height: 200
         });
 
@@ -217,8 +248,6 @@
     }
 
     function closePix() { document.getElementById('pix-modal').style.display = 'none'; }
-    
-    renderRoster();
 </script>
 
 </body>
