@@ -91,7 +91,7 @@
         .pix-card { background: #FFF; padding: 30px; border-radius: 30px; text-align: center; width: 100%; max-width: 320px; }
     </style>
 </head>
-<body oncontextmenu="return false;"> <!-- Bloqueio de Clique Direito -->
+<body oncontextmenu="return false;">
 
 <div id="auth-screen">
     <div class="login-card">
@@ -170,7 +170,6 @@
         currentUser = _0xAlpha.find(u => u.c === input);
         
         if(currentUser) {
-            document.getElementById('auth-screen').style.fadeOut = "slow";
             setTimeout(() => {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
@@ -223,20 +222,58 @@
         const modal = document.getElementById('pix-modal');
         const qrContainer = document.getElementById('qrcode');
         const transp = parseFloat(document.getElementById('inp-transp').value) || 0;
-        const total = (((seconds/3600)*45) + transp).toFixed(2);
-
-        qrContainer.innerHTML = "";
-        // Lógica PIX Dinâmica: Usa a chave do currentUser do banco de dados
-        const payload = `00020126330014BR.GOV.BCB.PIX0111${currentUser.pix}520400005303986540${total}5802BR5915SANDXCDD6008BRASILIA62070503***6304`;
+        const totalValue = (((seconds / 3600) * 45) + transp).toFixed(2);
         
-        new QRCode(qrContainer, { text: payload, width: 180, height: 180 });
-        document.getElementById('pix-details').innerText = `DESTINATÁRIO: ${currentUser.n}\nCHAVE: ${currentUser.pix}\nVALOR: R$ ${total}`;
+        qrContainer.innerHTML = "";
+
+        const pixKey = currentUser.pix.trim();
+        const merchantName = "X-PARTNER";
+        const merchantCity = "BRASILIA";
+        
+        const gui = "0014BR.GOV.BCB.PIX";
+        const keyField = "01" + pixKey.length.toString().padStart(2, '0') + pixKey;
+        const merchantAccountInfo = "26" + (gui.length + keyField.length).toString().padStart(2, '0') + gui + keyField;
+
+        let payload = "000201"; 
+        payload += merchantAccountInfo;
+        payload += "52040000"; 
+        payload += "5303986"; 
+        payload += "54" + totalValue.length.toString().padStart(2, '0') + totalValue; 
+        payload += "5802BR"; 
+        payload += "59" + merchantName.length.toString().padStart(2, '0') + merchantName; 
+        payload += "60" + merchantCity.length.toString().padStart(2, '0') + merchantCity; 
+        payload += "62070503***"; 
+        payload += "6304"; 
+
+        function crc16(data) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < data.length; i++) {
+                crc ^= data.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    if ((crc & 0x8000) !== 0) crc = (crc << 1) ^ 0x1021;
+                    else crc <<= 1;
+                }
+            }
+            return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        const finalPayload = payload + crc16(payload);
+
+        new QRCode(qrContainer, {
+            text: finalPayload,
+            width: 180,
+            height: 180,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+
+        document.getElementById('pix-details').innerText = `DESTINATÁRIO: ${currentUser.n}\nVALOR TOTAL: R$ ${totalValue}\nCHAVE: ${pixKey}`;
         modal.style.display = 'flex';
     }
 
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-    // Detecção de Console Aberto (Anti-F12 Avançado)
     setInterval(function() {
         if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
             document.body.innerHTML = "<h1>VIOLAÇÃO DE SEGURANÇA DETECTADA</h1>";
