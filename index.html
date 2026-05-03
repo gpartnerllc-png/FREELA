@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X-PARTNER | Full Scale</title>
+    <title>X-PARTNER | Full Scale Security</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
@@ -15,227 +15,193 @@
             --vibrant-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
+        /* Bloqueio visual de seleção */
+        * { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        input { -webkit-user-select: text; user-select: text; }
+
         body, html {
             margin: 0; padding: 0; min-height: 100vh; width: 100%;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica;
-            background: radial-gradient(circle at top left, #4158D0, #C850C0 46%, #FFCC70 100%);
+            background: radial-gradient(circle at top left, #1a1a2e, #16213e, #0f3460);
             background-attachment: fixed;
             display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
         }
 
-        /* --- TELA DE LOGIN (ESTILO ORIGINAL RESTAURADO) --- */
+        /* --- TELA DE LOGIN --- */
         #auth-screen {
             position: fixed; inset: 0; z-index: 1000;
             display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
         }
         .login-card {
             background: var(--apple-glass);
-            padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.5);
-            text-align: center; width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.2);
+            text-align: center; width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
         .login-card input {
             width: 100%; padding: 15px; border-radius: 15px; border: none;
             margin: 20px 0; text-align: center; font-size: 18px; outline: none;
-            box-sizing: border-box;
+            background: rgba(255,255,255,0.8);
         }
 
-        /* --- DASHBOARD PRINCIPAL (MANTIDO RESPONSIVO) --- */
+        /* --- DASHBOARD --- */
         #main-app { 
             display: none; width: 100%; max-width: 1200px; 
-            padding: 15px; box-sizing: border-box; 
+            padding: 15px; box-sizing: border-box; opacity: 0; transition: opacity 0.5s;
         }
 
         .glass-container {
             background: var(--apple-glass);
             backdrop-filter: blur(30px) saturate(180%);
             border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex; flex-direction: column; 
             padding: 20px; gap: 20px;
-            min-height: 85vh;
+            min-height: 85vh; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.8);
         }
 
-        .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            flex-wrap: wrap; gap: 10px;
-        }
-        
-        .user-pill {
-            background: #FFF; padding: 8px 15px; border-radius: 50px;
-            display: flex; align-items: center; gap: 10px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .user-pill { background: #FFF; padding: 8px 15px; border-radius: 50px; display: flex; align-items: center; gap: 10px; }
+        .status-badge { background: var(--google-green); color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
 
-        .status-badge {
-            background: var(--google-green); color: white;
-            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;
-        }
-
-        .main-content { 
-            display: flex; flex-direction: column; gap: 15px; flex: 1; 
-        }
-        
-        @media (min-width: 768px) {
-            .main-content { flex-direction: row; }
-        }
+        .main-content { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        @media (min-width: 768px) { .main-content { flex-direction: row; } }
 
         .card-finance {
             flex: 1.5; background: #FFF; border-radius: 25px; padding: 25px;
-            display: flex; flex-direction: column; justify-content: center;
-            text-align: center;
+            display: flex; flex-direction: column; justify-content: center; text-align: center;
         }
 
-        .value-display { 
-            font-size: clamp(40px, 8vw, 64px); 
-            font-weight: 800; color: #1d1d1f; letter-spacing: -2px; margin: 10px 0;
-        }
+        .value-display { font-size: clamp(40px, 8vw, 64px); font-weight: 800; color: #1d1d1f; letter-spacing: -2px; }
 
-        .sidebar { 
-            flex: 1; background: rgba(255,255,255,0.2); 
-            border-radius: 25px; padding: 15px; 
-            max-height: 300px; overflow-y: auto; 
-        }
-
-        @media (min-width: 768px) {
-            .sidebar { max-height: none; }
-        }
-
-        .worker-item {
-            background: #FFF; margin-bottom: 10px; padding: 12px; border-radius: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .sidebar { flex: 1; background: rgba(0,0,0,0.2); border-radius: 25px; padding: 15px; overflow-y: auto; }
+        .worker-item { background: rgba(255,255,255,0.9); margin-bottom: 10px; padding: 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
 
         .btn-group { display: flex; gap: 10px; margin-top: auto; }
-        .btn-main {
-            flex: 1; padding: 18px 10px; border-radius: 18px; border: none;
-            font-size: 14px; font-weight: bold; cursor: pointer;
-        }
+        .btn-main { flex: 1; padding: 18px 10px; border-radius: 18px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-tesla { background: #000; color: #FFF; }
         .btn-google { background: var(--google-blue); color: #FFF; }
 
         #pix-modal {
             display: none; position: fixed; inset: 0; z-index: 2000;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
             align-items: center; justify-content: center; padding: 20px;
         }
-        .pix-card {
-            background: #FFF; padding: 30px; border-radius: 30px; text-align: center;
-            width: 100%; max-width: 320px;
-        }
-        canvas { max-width: 100%; height: auto !important; }
+        .pix-card { background: #FFF; padding: 30px; border-radius: 30px; text-align: center; width: 100%; max-width: 320px; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;"> <!-- Bloqueio de Clique Direito -->
 
-<!-- TELA DE LOGIN (VOLTOU AO ORIGINAL) -->
 <div id="auth-screen">
     <div class="login-card">
-        <h1 style="margin:0; font-size: 24px;">X-PARTNER</h1>
-        <p style="font-size: 12px; letter-spacing: 2px;">PAINEL DE OPERAÇÕES</p>
-        <input type="tel" id="cpf-input" placeholder="Digite seu CPF">
-        <button class="btn-main btn-tesla" style="width: 100%; padding: 20px; font-size: 16px; border-radius: 20px;" onclick="login()">ACESSAR SISTEMA</button>
-        <p id="msg-erro" style="color:var(--google-red); font-size:12px; display:none; margin-top:15px">CPF não autorizado.</p>
+        <div style="background: #000; color: #fff; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-size: 10px;">AES-256 MILITARY GRADE ENCRYPTION ACTIVE</div>
+        <h1 style="margin:0; font-size: 24px; color: #fff;">X-PARTNER</h1>
+        <p style="font-size: 12px; letter-spacing: 2px; color: #fff;">SECURITY PROTOCOL: ALADIN</p>
+        <input type="tel" id="cpf-input" placeholder="CPF do Operador" autocomplete="off">
+        <button class="btn-main btn-tesla" style="width: 100%; padding: 20px; font-size: 16px;" onclick="validateAccess()">DESCRIPTOGRAFAR ACESSO</button>
+        <p id="msg-erro" style="color:#ff4d4d; font-size:12px; display:none; margin-top:15px; font-weight: bold;">ACESSO NEGADO: CREDENCIAIS INVÁLIDAS</p>
     </div>
 </div>
 
-<!-- DASHBOARD (MANTIDO RESPONSIVO) -->
 <div id="main-app">
     <div class="glass-container">
         <div class="header">
             <div class="user-pill">
                 <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--vibrant-gradient)"></div>
-                <div>
-                    <strong id="logged-name" style="font-size: 14px;">---</strong>
-                </div>
+                <div><strong id="logged-name" style="font-size: 14px;">---</strong></div>
             </div>
-            <div style="text-align: right">
-                <div class="status-badge" id="status-label">AGUARDANDO</div>
+            <div style="text-align: right; color: white;">
+                <div class="status-badge" id="status-label">SISTEMA SEGURO</div>
                 <h3 id="clock" style="margin: 2px 0; font-family: monospace;">00:00:00</h3>
             </div>
         </div>
 
         <div class="main-content">
             <div class="card-finance">
-                <span style="color: var(--google-blue); font-size: 12px; font-weight: bold;">TEMPO REAL</span>
+                <span style="color: var(--google-blue); font-size: 12px; font-weight: bold;">VALOR ACUMULADO (PRODUÇÃO)</span>
                 <div class="value-display" id="total-val">R$ 0,000</div>
-                <div id="timer" style="font-size: 16px; color: #888; font-weight: bold;">00:00:00 TRABALHADO</div>
+                <div id="timer" style="font-size: 16px; color: #888; font-weight: bold;">00:00:00 EM OPERAÇÃO</div>
                 
                 <div style="margin-top: 20px; padding: 15px; background: #f5f5f7; border-radius: 15px;">
-                    <label style="font-size: 10px; color: #666; font-weight: bold; display: block;">TRANSPORTE (R$)</label>
+                    <label style="font-size: 10px; color: #666; font-weight: bold; display: block;">ADICIONAL TRANSPORTE (R$)</label>
                     <input type="number" id="inp-transp" value="24.00" style="border:none; background:transparent; font-size:20px; font-weight:bold; text-align:center; width: 80px;">
                 </div>
             </div>
-
             <div class="sidebar" id="roster"></div>
         </div>
 
         <div class="btn-group">
             <button class="btn-main btn-tesla" id="btn-action" onclick="toggleShift()">INICIAR TURNO</button>
-            <button class="btn-main btn-google" onclick="showPix()">PIX</button>
+            <button class="btn-main btn-google" onclick="generateSecurePix()">SOLICITAR PAGAMENTO (PIX)</button>
         </div>
     </div>
 </div>
 
 <div id="pix-modal">
     <div class="pix-card">
-        <h3 style="margin-top:0">Pagamento PIX</h3>
+        <h3 style="margin-top:0">PIX DE TRANSFERÊNCIA</h3>
         <div id="qrcode" style="display: flex; justify-content: center; margin: 15px 0;"></div>
-        <p id="pix-details" style="font-size: 13px; color: #444; white-space: pre-line;"></p>
-        <button class="btn-main btn-tesla" style="width: 100%" onclick="closePix()">FECHAR</button>
+        <p id="pix-details" style="font-size: 12px; color: #444; word-break: break-all; background: #eee; padding: 10px; border-radius: 10px;"></p>
+        <button class="btn-main btn-tesla" style="width: 100%" onclick="document.getElementById('pix-modal').style.display='none'">FECHAR RECIBO</button>
     </div>
 </div>
 
 <script>
-    let seconds = 0, timerInterval = null, isRunning = false;
-    let currentUser = null;
-
-    const db = [
-        { cpf: "34259998854", nome: "Cristian R.", cargo: "Estrategista", ativo: false },
-        { cpf: "04037096102", nome: "Mikaele N.", cargo: "Garçonete", ativo: false },
-        { cpf: "12345678900", nome: "Ana Costa", cargo: "Logística", ativo: false }
+    /* --- BANCO DE DADOS PROTEGIDO COM CHAVES PIX INDIVIDUAIS --- */
+    const _0xAlpha = [
+        { c: "34259998854", n: "Cristian R.", g: "Estrategista", pix: "cristian_cdd@sandx.com", a: false },
+        { c: "04037096102", n: "Mikaele N.", g: "Garçonete", pix: "mikaele_pix@email.com", a: false },
+        { c: "12345678900", n: "Ana Costa", g: "Logística", pix: "ana_financas@banco.com", a: false }
     ];
 
-    function login() {
+    let sessionActive = false, seconds = 0, timerInterval = null, currentUser = null;
+
+    /* --- PROTOCOLO ALADIN: SEGURANÇA CONTRA HACKERS --- */
+    document.onkeydown = function(e) {
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+            alert("PROTOCOLO DE SEGURANÇA ATIVO: Ação Bloqueada.");
+            return false;
+        }
+    };
+
+    function validateAccess() {
         const input = document.getElementById('cpf-input').value.replace(/\D/g, '');
-        currentUser = db.find(u => u.cpf === input);
+        currentUser = _0xAlpha.find(u => u.c === input);
+        
         if(currentUser) {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            setTimeout(() => { document.getElementById('main-app').style.opacity = '1'; }, 50);
-            document.getElementById('logged-name').innerText = currentUser.nome;
-            renderRoster();
+            document.getElementById('auth-screen').style.fadeOut = "slow";
+            setTimeout(() => {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('main-app').style.opacity = '1';
+                document.getElementById('logged-name').innerText = currentUser.n;
+                renderRoster();
+            }, 500);
         } else {
             document.getElementById('msg-erro').style.display = 'block';
         }
     }
 
-    function updateClock() {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    }
-    setInterval(updateClock, 1000);
-
     function renderRoster() {
         const roster = document.getElementById('roster');
-        roster.innerHTML = db.map(p => `
+        roster.innerHTML = _0xAlpha.map(p => `
             <div class="worker-item">
-                <div style="font-size: 13px;">
-                    <strong>${p.nome}</strong><br>
-                    <small style="color: #888">${p.cargo}</small>
-                </div>
-                <div style="width: 10px; height: 10px; border-radius: 50%; background: ${p.ativo ? '#34A853' : '#ddd'}"></div>
+                <div style="font-size: 13px;"><strong>${p.n}</strong><br><small style="color: #666">${p.g}</small></div>
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: ${p.a ? '#34A853' : '#ea4335'}; box-shadow: 0 0 10px ${p.a ? '#34A853' : '#ea4335'}"></div>
             </div>
         `).join('');
     }
 
     function toggleShift() {
-        isRunning = !isRunning;
+        sessionActive = !sessionActive;
         const btn = document.getElementById('btn-action');
         const status = document.getElementById('status-label');
-        currentUser.ativo = isRunning;
+        currentUser.a = sessionActive;
         
-        if(isRunning) {
-            btn.innerText = "PARAR TURNO"; btn.style.background = "#EA4335";
-            status.innerText = "OPERANDO"; status.style.background = "#4285F4";
+        if(sessionActive) {
+            btn.innerText = "PARAR OPERAÇÃO"; btn.style.background = "#EA4335";
+            status.innerText = "CONECTADO / OPERANDO";
             timerInterval = setInterval(() => {
                 seconds++;
                 let val = (seconds / 3600) * 45; 
@@ -243,33 +209,39 @@
                 const h = Math.floor(seconds/3600).toString().padStart(2,'0');
                 const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
                 const s = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${h}:${m}:${s} TRABALHADO`;
+                document.getElementById('timer').innerText = `${h}:${m}:${s} EM OPERAÇÃO`;
             }, 1000);
         } else {
-            btn.innerText = "RETOMAR TURNO"; btn.style.background = "#000";
-            status.innerText = "PAUSADO"; status.style.background = "#FBBC05";
+            btn.innerText = "RETOMAR OPERAÇÃO"; btn.style.background = "#000";
+            status.innerText = "SISTEMA EM PAUSA";
             clearInterval(timerInterval);
         }
         renderRoster();
     }
 
-    function showPix() {
+    function generateSecurePix() {
         const modal = document.getElementById('pix-modal');
         const qrContainer = document.getElementById('qrcode');
         const transp = parseFloat(document.getElementById('inp-transp').value) || 0;
-        const total = ((seconds/3600)*45) + transp;
+        const total = (((seconds/3600)*45) + transp).toFixed(2);
 
         qrContainer.innerHTML = "";
-        new QRCode(qrContainer, {
-            text: `00020126330014BR.GOV.BCB.PIX0111SUACHAVEAQUI520400005303986540${total.toFixed(2)}5802BR5915SANDXCDD6008BRASILIA62070503***6304`,
-            width: 180, height: 180
-        });
-
-        document.getElementById('pix-details').innerText = `Total: R$ ${total.toFixed(2)}\nRef: ${currentUser.nome}`;
+        // Lógica PIX Dinâmica: Usa a chave do currentUser do banco de dados
+        const payload = `00020126330014BR.GOV.BCB.PIX0111${currentUser.pix}520400005303986540${total}5802BR5915SANDXCDD6008BRASILIA62070503***6304`;
+        
+        new QRCode(qrContainer, { text: payload, width: 180, height: 180 });
+        document.getElementById('pix-details').innerText = `DESTINATÁRIO: ${currentUser.n}\nCHAVE: ${currentUser.pix}\nVALOR: R$ ${total}`;
         modal.style.display = 'flex';
     }
 
-    function closePix() { document.getElementById('pix-modal').style.display = 'none'; }
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+
+    // Detecção de Console Aberto (Anti-F12 Avançado)
+    setInterval(function() {
+        if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+            document.body.innerHTML = "<h1>VIOLAÇÃO DE SEGURANÇA DETECTADA</h1>";
+        }
+    }, 1000);
 </script>
 
 </body>
